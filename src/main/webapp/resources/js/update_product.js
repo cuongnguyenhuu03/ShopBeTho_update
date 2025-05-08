@@ -247,6 +247,13 @@ addColor.addEventListener("click", () => {
     img.insertAdjacentElement("afterend", detailInput);
   });
 
+  const inputColorId = document.createElement("input")
+    inputColorId.value = -1;
+    inputColorId.name = "colorIds";
+    inputColorId.type = "hidden";
+
+    group.appendChild(inputColorId);
+
   group.appendChild(avatarInput);
   container.appendChild(group);
 });

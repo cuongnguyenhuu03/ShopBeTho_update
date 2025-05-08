@@ -266,6 +266,7 @@
                                     <div
                                             class="CreateProduct__GeneralInfor__UploadImg__avt__box__template__div"
                                     >
+                                        <input type="hidden" name="colorIds" value="${colorName.id}"/>
                                         <input
                                                 type="file"
                                                 id="CreateProduct_Avatar"
@@ -513,43 +514,53 @@
 
 
 <script>
-    const imageAvatar = document.querySelector(".addImgAvt")
-    imageAvatar.addEventListener("click", () => {
-        const inputChooseAvatar = document.querySelector("#CreateProduct_Avatar");
-        inputChooseAvatar.click();
-        inputChooseAvatar.addEventListener("change", (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                imageAvatar.src = URL.createObjectURL(file);
-                imageAvatar.dataset.file = file.name;
-            }
-        });
+    const divUploadAvatar = document.querySelectorAll(".CreateProduct__GeneralInfor__UploadImg__avt__box__template__div")
+    divUploadAvatar.forEach(child => {
+           const imageAvatar = child.querySelector(".addImgAvt")
+           const inputChooseAvatar = child.querySelector("#CreateProduct_Avatar");
+           imageAvatar.addEventListener("click", () => {
+                           inputChooseAvatar.click();
+                           inputChooseAvatar.addEventListener("change", (event) => {
+                               const file = event.target.files[0];
+                               if (file) {
+                                   imageAvatar.src = URL.createObjectURL(file);
+                                   imageAvatar.dataset.file = file.name;
+                               }
+                           });
+            });
+    })
 
-    });
+
 
 
     window.addEventListener("DOMContentLoaded", () => {
-        const detailImgs = document.querySelectorAll(
-            ".CreateProduct__GeneralInfor__UploadImg__Detail img"
-        );
-        detailImgs.forEach((img, index) => {
-            const detailInput = document.createElement("input");
-            detailInput.type = "file";
-            detailInput.name = "colorImages[0]" + "["+ index +"]";
-            detailInput.accept = "image/*";
-            detailInput.style.display = "none";
+     const detailImgsContainer = document.querySelectorAll(".CreateProduct__GeneralInfor__UploadImg__Detail");
+     let indexTemp = 0;
+     detailImgsContainer.forEach((child, index) => {
+        const imgChild = child.querySelectorAll("img");
 
-            img.addEventListener("click", () => detailInput.click());
-            detailInput.addEventListener("change", (event) => {
-                const file = event.target.files[0];
-                if (file) {
-                    img.src = URL.createObjectURL(file);
-                    img.dataset.file = file.name;
-                }
-            });
-            const container = document.querySelector(".CreateProduct__GeneralInfor__UploadImg__avt__box__template__div");
-            container.appendChild(detailInput);
-        });
+        imgChild.forEach((img, index) => {
+                    const detailInput = document.createElement("input");
+                    detailInput.type = "file";
+                    detailInput.name = "colorImages[" + indexTemp + "]" + "["+ index +"]";
+                    detailInput.accept = "image/*";
+                    detailInput.style.display = "none";
+
+                    img.addEventListener("click", () => detailInput.click());
+                    detailInput.addEventListener("change", (event) => {
+                        const file = event.target.files[0];
+                        if (file) {
+                            img.src = URL.createObjectURL(file);
+                            img.dataset.file = file.name;
+                        }
+                    });
+                  child.appendChild(detailInput)
+
+                });
+                indexTemp++;
+     })
+
+
 
         const typeCatalogue = document.querySelector(".CreateProduct__GeneralInfor__UploadImg__Category__Product__Type")
         const typeCatalogueDetail = document.querySelector(".CreateProduct__GeneralInfor__UploadImg__Category__Product__Type__Detail")
