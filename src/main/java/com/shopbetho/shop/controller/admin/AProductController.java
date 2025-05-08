@@ -180,21 +180,23 @@ public class AProductController {
             @RequestParam("numberColor") int numberColor,
             @RequestParam("avatarColors") List<MultipartFile> avatarColors,
             @RequestParam("colorNames") List<String> colorNames,
+            @RequestParam("colorIds") List<Long> colorIds,
             @RequestParam Map<String, MultipartFile> fileMap,
             Model model
     ) throws IOException {
-        if( id == null || name.isEmpty() || code.isEmpty() || description.isEmpty() || catalogue.isEmpty() || sizes.isEmpty() || numberColor <= 0) {
+        if (id == null || name.isEmpty() || code.isEmpty() || description.isEmpty() || catalogue.isEmpty() || sizes.isEmpty() || numberColor <= 0) {
             model.addAttribute("error", "Please fill in all required fields.");
             return "redirect:/admin/product/updatePage";
         }
-        if (avatarColors.size() != numberColor || colorNames.size() != numberColor) {
+        if (avatarColors.size() != numberColor || colorNames.size() != numberColor || colorIds.size() != numberColor) {
             model.addAttribute("error", "Number of colors and their details do not match.");
             return "redirect:/admin/product/updatePage";
         }
-        if(price <= 0) {
+        if (price <= 0) {
             model.addAttribute("error", "Price must be greater than 0.");
             return "redirect:/admin/product/updatePage";
         }
+
         Product product = productService.fetchById(id);
         product.setId(id);
         product.setName(name);
@@ -207,56 +209,76 @@ public class AProductController {
         product.setActive(isActive);
         product.setPrice(price);
         product.setSizes(sizes);
-        List<Color> colorEntities = product.getColors();
+
+        List<Color> existingColors = product.getColors();
+        List<Color> updatedColors = new ArrayList<>();
+
+        // XÓA những Color cũ không còn tồn tại trong danh sách colorIds gửi từ form
+        List<Long> colorIdsToKeep = colorIds.stream().filter(idVal -> idVal != null && idVal > 0).toList();
+        existingColors.removeIf(color -> {
+            boolean toRemove = !colorIdsToKeep.contains(color.getId());
+            if (toRemove) {
+                color.setProduct(null); // nếu bạn dùng orphanRemoval = true
+            }
+            return toRemove;
+        });
+
         for (int i = 0; i < numberColor; i++) {
-            if(numberColor > colorEntities.size()) {
-                Color color = new Color();
-                color.setName(colorNames.get(i));
-                String urlAvt = cloudinaryService.upLoadImage(avatarColors.get(i));
-                if(urlAvt != null && !urlAvt.isEmpty()) {
+            Long colorId = colorIds.get(i);
+            String colorName = colorNames.get(i);
+            MultipartFile avatar = avatarColors.get(i);
+
+            Color color;
+            if (colorId != null && colorId > 0) {
+                // Cập nhật Color cũ
+                color = existingColors.stream()
+                        .filter(c -> c.getId().equals(colorId))
+                        .findFirst()
+                        .orElse(new Color());
+            } else {
+                // Thêm Color mới
+                color = new Color();
+                color.setImageUrl(new ArrayList<>());
+            }
+
+            color.setName(colorName);
+            if (avatar != null && !avatar.isEmpty()) {
+                String urlAvt = cloudinaryService.upLoadImage(avatar);
+                if (urlAvt != null && !urlAvt.isEmpty()) {
                     color.setAvtColor(urlAvt);
                 }
-                List<String> imageUrls = colorEntities.get(i).getImageUrl();
-                for (int j = 0; j < 4; j++) {
-                    String key = "colorImages[" + i + "][" + j + "]";
-                    MultipartFile image = fileMap.get(key);
-
-                    if (image != null && !image.isEmpty()) {
-                        String imageUrl = cloudinaryService.upLoadImage(image);
-                        if (imageUrl != null && !imageUrl.isEmpty()) {
-                            imageUrls.set(j, imageUrl);
-                        }
-                    }
-                }
-                color.setImageUrl(imageUrls);
-                color.setProduct(product);
-                colorEntities.add(color);
-            } else {
-                colorEntities.get(i).setName(colorNames.get(i));
-                String urlAvt = cloudinaryService.upLoadImage(avatarColors.get(i));
-                if(urlAvt != null && !urlAvt.isEmpty()) {
-                    colorEntities.get(i).setAvtColor(urlAvt);
-                }
-
-                List<String> imageUrls = colorEntities.get(i).getImageUrl();
-                for (int j = 0; j < 4; j++) {
-                    String key = "colorImages[" + i + "][" + j + "]";
-                    MultipartFile image = fileMap.get(key);
-
-                    if (image != null && !image.isEmpty()) {
-                        String imageUrl = cloudinaryService.upLoadImage(image);
-                        if (imageUrl != null && !imageUrl.isEmpty()) {
-                            imageUrls.set(j, imageUrl);
-                        }
-                    }
-                }
-                colorEntities.get(i).setImageUrl(imageUrls);
             }
+
+            List<String> imageUrls = color.getImageUrl();
+            if (imageUrls == null || imageUrls.size() == 0) {
+                imageUrls = new ArrayList<>();
+            }
+            for (int j = 0; j < 4; j++) {
+                String key = "colorImages[" + i + "][" + j + "]";
+                MultipartFile image = fileMap.get(key);
+
+                if (image != null && !image.isEmpty()) {
+                    String imageUrl = cloudinaryService.upLoadImage(image);
+                    if (imageUrl != null && !imageUrl.isEmpty()) {
+                        if(imageUrls.size() <= j) {
+                            imageUrls.add(imageUrl);
+                        } else {
+                            imageUrls.set(j, imageUrl);
+                        }
+                    }
+                }
+            }
+            color.setImageUrl(imageUrls);
+            color.setProduct(product);
+
+            updatedColors.add(color);
         }
-        product.setColors(colorEntities);
+
+        product.setColors(updatedColors);
         productService.updateProduct(product);
         return "redirect:/admin/product/dashboardProduct";
     }
+
     @PostMapping("/admin/product/order")
     public String orderProduct(
             @RequestParam("productId") Long productId,
