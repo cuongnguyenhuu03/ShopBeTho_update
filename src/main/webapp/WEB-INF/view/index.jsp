@@ -81,7 +81,7 @@
                                           <c:when test="${productsHighLight != null && productsHighLight.size() > 0}">
                                               <c:forEach var="product" items="${productsHighLight}">
                                                   <div class="card col-sm-3">
-                                                      <div style="background-image: url(${product.colors[0].avtColor});
+                                                      <div style="background-image: url(/upload/file/${product.colors[0].avtColor});
                                                               background-size: cover;
                                                               background-repeat: no-repeat;
                                                               background-position: center;
@@ -127,7 +127,7 @@
                                                           <c:forEach var="picture" items="${collections.imageUrls}" varStatus="loop">
                                                               <img
                                                                       class=`main__3__collection__img__item__${loop.index + 1}`
-                                                                      src="${picture}"
+                                                                      src="/upload/file/${picture}"
                                                               />
                                                           </c:forEach>
                                                       </c:when>
@@ -169,7 +169,7 @@
         <div class="main__3__banner">
                      <c:if test="${banners != null}">
                          <img
-                                 src="${banners.secondBanner}"
+                                 src="/upload/file/${banners.secondBanner}"
                          />
                      </c:if>
 
@@ -191,7 +191,7 @@
                                           <c:when test="${productsNew != null && productsNew.size() > 0}">
                                               <c:forEach var="product" items="${productsNew}">
                                                   <div class="card col-sm-3">
-                                                      <div style="background-image: url(${product.colors[0].avtColor});
+                                                      <div style="background-image: url(/upload/file/${product.colors[0].avtColor});
                                                               background-size: cover;
                                                               background-repeat: no-repeat;
                                                               background-position: center;
@@ -238,7 +238,7 @@
                                         <c:forEach var="blogItem" items="${blogs}">
                                             <div class="card">
                                                 <img
-                                                        src="${blogItem.imageUrl}"
+                                                        src="/upload/file/${blogItem.imageUrl}"
                                                 />
                                                 <h5 class="card-title" style="
                                                   display: -webkit-box;

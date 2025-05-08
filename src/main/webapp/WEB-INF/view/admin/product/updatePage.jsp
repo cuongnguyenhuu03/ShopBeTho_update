@@ -290,7 +290,7 @@
                                         <img
                                                 class="addImgAvt"
                                                 style="width: 100%"
-                                                src="${colorName.avtColor}"
+                                                src="/upload/file/${colorName.avtColor}"
                                                 name="avatarColors"
                                         />
                                         <div class="CreateProduct__GeneralInfor__UploadImg__Detail">
@@ -300,7 +300,7 @@
                                                         <img
                                                                 class="addImgDetail__${loop.index + 1}"
                                                                 style="width: 80%"
-                                                                src="${itemImage}"
+                                                                src="/upload/file/${itemImage}"
                                                         />
                                                     </c:forEach>
                                                 </c:when>

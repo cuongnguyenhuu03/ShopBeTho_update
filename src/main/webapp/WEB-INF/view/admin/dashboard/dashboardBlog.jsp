@@ -83,7 +83,14 @@
 
                         <div class="col-sm-4">
                         <span class="main__navbar__product">Nội dung sơ lược</span>
-                            ${blogItem.content}
+                            <div class="card-title" style="
+                                        display: -webkit-box;
+                                        -webkit-line-clamp: 3;
+                                        -webkit-box-orient: vertical;
+                                        overflow: hidden;">
+                                        ${blogItem.content}
+                             </div>
+
                         </div>
                         <div class="col-sm-2">
                          <span class="main__navbar__product">Thời gian tạo</span>

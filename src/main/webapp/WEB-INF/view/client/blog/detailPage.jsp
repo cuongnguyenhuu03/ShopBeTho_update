@@ -27,7 +27,7 @@
             <div class="col-12">
                 <c:choose>
                     <c:when test="${blog != null}">
-                        <img src="${blog.imageUrl}"/>
+                        <img src="/upload/file/${blog.imageUrl}"/>
                         <h1>${blog.title}</h1>
                         <p>${blog.content}</p>
                         <h3>Chi tiết: </h3>

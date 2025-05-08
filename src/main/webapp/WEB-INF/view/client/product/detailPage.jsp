@@ -96,7 +96,8 @@
             <div class="col-lg-6">
                 <div
                         class="show-image-product"
-                        style="background-image: url(${product.colors[0].avtColor});
+                        style="
+                            background-image: url(/upload/file/${product.colors[0].avtColor});
                             background-size: cover;
                                 background-position: center;
                             background-repeat: no-repeat;
@@ -112,7 +113,7 @@
                                         onclick="handleItemOnclick('${color}')"
                                         class="show-image-product-color-${loop.index}"
                                         style="
-                                    background-image: url(${color});
+                                    background-image: url(/upload/file/${color});
                                     background-size: cover;
                                     background-repeat: no-repeat;
                                         background-position: center;
@@ -164,7 +165,7 @@
                                         imageColors: '${urlColor[loop.index]}',
                                 })"
                                 style="
-                                background-image: url(${color.avtColor});
+                                background-image: url(/upload/file/${color.avtColor});
                                 background-size: cover;
                                 background-repeat: no-repeat;
                                 background-position: center;
@@ -281,7 +282,7 @@
 
                     <c:forEach var="product" items="${productLike}">
                         <div class="card">
-                            <div class="card-img" style="background-image: url(${product.colors[0].avtColor});
+                            <div class="card-img" style="background-image: url('/upload/file/${product.colors[0].avtColor}');
                                     background-size: cover;
                                     background-repeat: no-repeat;
                                     background-position: center;
@@ -419,14 +420,14 @@
         );
         const imageUrl = colors.imageColors.split("&&&");
         const index = colors.index;
-        showAvtProduct.style.backgroundImage = 'url(' + colors.currentColor + ')';
+        showAvtProduct.style.backgroundImage = 'url(/upload/file/' + colors.currentColor + ')';
         const html = imageUrl.map((item, index) => {
             return `
                 <div
                     class="show-image-product-color-` + index + `"
                     onclick="handleItemOnclick('` + item +`')"
                     style="
-                           background-image: url(` + item + `);
+                           background-image: url(/upload/file/` + item + `);
                            background-size: cover;
                            background-repeat: no-repeat;
                            background-position: center;
@@ -443,7 +444,7 @@
         const showAvtProduct = document.querySelector(
             '.show-image-product'
         );
-        showAvtProduct.style.backgroundImage = 'url(' + imgUrl + ')';
+        showAvtProduct.style.backgroundImage = 'url(/upload/file/' + imgUrl + ')';
     }
     function formatCurrencyVN(amount) {
         return new Intl.NumberFormat('vi-VN', {

@@ -103,7 +103,7 @@
                             id="CreateProduct__GeneralInfor__UploadImg__Input"
                             accept="image/*"
                             hidden
-                            value="${blog.imageUrl}"
+                            value="/upload.file/${blog.imageUrl}"
                     />
                     <button class="CreateProductSubmit__Btn">Cập nhật</button>
                 </form>
@@ -171,7 +171,7 @@
                         <img
                                 id="CreateProduct__GeneralInfor__UploadImg__avt__Preview"
                                 style="width: 100%"
-                                src="${blog.imageUrl}"
+                                src="/upload/file/${blog.imageUrl}"
                         />
                         <span>Thêm hình ảnh</span>
 

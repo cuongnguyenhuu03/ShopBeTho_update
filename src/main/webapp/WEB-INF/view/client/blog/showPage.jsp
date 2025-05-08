@@ -31,7 +31,7 @@
             <div class="col-lg-4">
                     <div class="card">
                         <img
-                                src="${blogItem.imageUrl}"
+                                src="/upload/file/${blogItem.imageUrl}"
                         />
                         <h5 style="margin-top: 10px;" class="card-title">${blogItem.title}</h5>
 

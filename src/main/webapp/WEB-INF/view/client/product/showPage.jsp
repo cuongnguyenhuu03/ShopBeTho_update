@@ -34,7 +34,7 @@
                                               <div class="card">
                                                     <img
                                                       class="card-img-top"
-                                                      src="${product.colors[0].avtColor}"
+                                                      src="/upload/file/${product.colors[0].avtColor}"
                                                     />
                                                     <p  class="card-text">
                                                          ${product.description}

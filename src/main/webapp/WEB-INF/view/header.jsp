@@ -225,7 +225,7 @@
       <div class="header__banner">
        <c:if test="${banners != null}">
                    <img
-                           src="${banners.firstBanner}"
+                           src="/upload/file/${banners.firstBanner}"
                    />
                </c:if>
       </div>
