@@ -5,6 +5,8 @@ import com.shopbetho.shop.entity.Blog;
 import com.shopbetho.shop.entity.Product;
 import com.shopbetho.shop.service.BlogService;
 import com.shopbetho.shop.service.CloudinaryService;
+import com.shopbetho.shop.service.UploadService;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,10 @@ import java.util.List;
 
 @Controller
 public class ABlogController {
+
+@Autowired
+    private UploadService uploadService;
+
     @Autowired
     private BlogService blogService;
 
@@ -90,7 +96,7 @@ public class ABlogController {
         blog.setDescription(description);
         // Handle file upload and set the image URL
         if (!image.isEmpty()) {
-            String imageUrl = cloudinaryService.upLoadImage(image);
+            String imageUrl = uploadService.store(image, "file");
             blog.setImageUrl(imageUrl);
         }
         blogService.createBlog(blog);
@@ -117,7 +123,7 @@ public class ABlogController {
         blog.setDescription(description);
         // Handle file upload and set the image URL
         if (!image.isEmpty()) {
-            String imageUrl = cloudinaryService.upLoadImage(image);
+            String imageUrl = uploadService.store(image, "file");
             blog.setImageUrl(imageUrl);
         } else {
             blog.setImageUrl(blog.getImageUrl());

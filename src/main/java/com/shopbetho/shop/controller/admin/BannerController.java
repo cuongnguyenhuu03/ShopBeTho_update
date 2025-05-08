@@ -4,6 +4,8 @@ import com.shopbetho.shop.entity.AccountAdmin;
 import com.shopbetho.shop.entity.Banner;
 import com.shopbetho.shop.service.BannerService;
 import com.shopbetho.shop.service.CloudinaryService;
+import com.shopbetho.shop.service.UploadService;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,10 @@ import java.util.Map;
 
 @Controller
 public class BannerController {
+
+    @Autowired
+    private UploadService uploadService;
+
     @Autowired
     private CloudinaryService cloudinaryService;
     @Autowired
@@ -35,12 +41,12 @@ public class BannerController {
         Banner banner = new Banner();
 
         if (!image1.isEmpty()) {
-            String firstBanner = cloudinaryService.upLoadImage(image1);
+            String firstBanner = uploadService.store(image1, "file");
             banner.setFirstBanner(firstBanner);
         }
 
         if (!image2.isEmpty()) {
-            String secondBanner = cloudinaryService.upLoadImage(image2);
+            String secondBanner = uploadService.store(image2, "file");
             banner.setSecondBanner(secondBanner);
         }
 

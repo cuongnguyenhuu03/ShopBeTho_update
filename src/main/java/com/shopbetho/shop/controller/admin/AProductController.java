@@ -8,6 +8,8 @@ import com.shopbetho.shop.entity.Product;
 import com.shopbetho.shop.service.CloudinaryService;
 import com.shopbetho.shop.service.EmailService;
 import com.shopbetho.shop.service.ProductService;
+import com.shopbetho.shop.service.UploadService;
+
 import jakarta.servlet.http.HttpSession;
 import org.hibernate.engine.jdbc.Size;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,17 @@ import java.util.Map;
 
 @Controller
 public class AProductController {
+
+    @Autowired
+    private UploadService uploadService;
+
     @Autowired
     private CloudinaryService cloudinaryService;
     @Autowired
     private ProductService productService;
     @Autowired
     private EmailService emailService;
+
     @GetMapping("/admin/product")
     public String getDashboardPage(HttpSession session) {
         AccountAdmin admin = (AccountAdmin) session.getAttribute("loggedInAdmin");
@@ -52,7 +59,8 @@ public class AProductController {
     }
 
     @GetMapping("/admin/product/dashboardProduct")
-    public String getCreatePage(Model model, @RequestParam(defaultValue = "1", name = "page") int page, HttpSession session) {
+    public String getCreatePage(Model model, @RequestParam(defaultValue = "1", name = "page") int page,
+            HttpSession session) {
         AccountAdmin admin = (AccountAdmin) session.getAttribute("loggedInAdmin");
         if (admin == null) {
             return "redirect:/admin/login";
@@ -86,8 +94,7 @@ public class AProductController {
     @GetMapping("/admin/product/update/{id}")
     public String getUpdatePage(
             @PathVariable("id") Long id,
-            Model model
-            , HttpSession session) {
+            Model model, HttpSession session) {
         AccountAdmin admin = (AccountAdmin) session.getAttribute("loggedInAdmin");
         if (admin == null) {
             return "redirect:/admin/login";
@@ -112,9 +119,9 @@ public class AProductController {
             @RequestParam("avatarColors") List<MultipartFile> avatarColors,
             @RequestParam("colorNames") List<String> colorNames,
             @RequestParam Map<String, MultipartFile> fileMap,
-            Model model
-            ) throws IOException {
-        if(name.isEmpty() || code.isEmpty() || description.isEmpty() || catalogue.isEmpty() || sizes.isEmpty() || numberColor <= 0) {
+            Model model) throws IOException {
+        if (name.isEmpty() || code.isEmpty() || description.isEmpty() || catalogue.isEmpty() || sizes.isEmpty()
+                || numberColor <= 0) {
             model.addAttribute("error", "Please fill in all required fields.");
             return "admin/product/createPage";
         }
@@ -122,7 +129,7 @@ public class AProductController {
             model.addAttribute("error", "Number of colors and their details do not match.");
             return "admin/product/createPage";
         }
-        if(price <= 0) {
+        if (price <= 0) {
             model.addAttribute("error", "Price must be greater than 0.");
             return "admin/product/createPage";
         }
@@ -142,7 +149,7 @@ public class AProductController {
         for (int i = 0; i < numberColor; i++) {
             Color color = new Color();
             color.setName(colorNames.get(i));
-            String urlAvt = cloudinaryService.upLoadImage(avatarColors.get(i));
+            String urlAvt = uploadService.store(avatarColors.get(i), "file");
             color.setAvtColor(urlAvt);
             color.setProduct(product);
 
@@ -152,7 +159,7 @@ public class AProductController {
                 MultipartFile image = fileMap.get(key);
 
                 if (image != null && !image.isEmpty()) {
-                    imageUrls.add(cloudinaryService.upLoadImage(image));
+                    imageUrls.add(uploadService.store(image, "file"));
                 }
             }
             color.setImageUrl(imageUrls);
@@ -182,9 +189,9 @@ public class AProductController {
             @RequestParam("colorNames") List<String> colorNames,
             @RequestParam("colorIds") List<Long> colorIds,
             @RequestParam Map<String, MultipartFile> fileMap,
-            Model model
-    ) throws IOException {
-        if (id == null || name.isEmpty() || code.isEmpty() || description.isEmpty() || catalogue.isEmpty() || sizes.isEmpty() || numberColor <= 0) {
+            Model model) throws IOException {
+        if (id == null || name.isEmpty() || code.isEmpty() || description.isEmpty() || catalogue.isEmpty()
+                || sizes.isEmpty() || numberColor <= 0) {
             model.addAttribute("error", "Please fill in all required fields.");
             return "redirect:/admin/product/updatePage";
         }
@@ -243,7 +250,7 @@ public class AProductController {
 
             color.setName(colorName);
             if (avatar != null && !avatar.isEmpty()) {
-                String urlAvt = cloudinaryService.upLoadImage(avatar);
+                String urlAvt = uploadService.store(avatar, "file");
                 if (urlAvt != null && !urlAvt.isEmpty()) {
                     color.setAvtColor(urlAvt);
                 }
@@ -258,9 +265,9 @@ public class AProductController {
                 MultipartFile image = fileMap.get(key);
 
                 if (image != null && !image.isEmpty()) {
-                    String imageUrl = cloudinaryService.upLoadImage(image);
+                    String imageUrl = uploadService.store(image, "file");
                     if (imageUrl != null && !imageUrl.isEmpty()) {
-                        if(imageUrls.size() <= j) {
+                        if (imageUrls.size() <= j) {
                             imageUrls.add(imageUrl);
                         } else {
                             imageUrls.set(j, imageUrl);
@@ -291,15 +298,14 @@ public class AProductController {
             @RequestParam("sdt") String sdt,
             @RequestParam("address") String address,
             @RequestParam("emailAdmin") String emailAdmin,
-            Model model
-    ) {
+            Model model) {
         // Validate input data
-        if (productId == null || productName.isEmpty() || total <= 0 || price <= 0 || color.isEmpty() || size.isEmpty() || nameCustomer.isEmpty() || sdt.isEmpty() || address.isEmpty() || emailAdmin.isEmpty()) {
+        if (productId == null || productName.isEmpty() || total <= 0 || price <= 0 || color.isEmpty() || size.isEmpty()
+                || nameCustomer.isEmpty() || sdt.isEmpty() || address.isEmpty() || emailAdmin.isEmpty()) {
             model.addAttribute("error", "Please fill in all required fields.");
             return "redirect:/";
         }
-        String messageSendEmail =
-                "Product ID: " + productId + "\n" +
+        String messageSendEmail = "Product ID: " + productId + "\n" +
                 "Product Name: " + productName + "\n" +
                 "Total: " + total + "\n" +
                 "Color: " + color + "\n" +
